@@ -1,0 +1,26 @@
+eliminar fecha
+--Esta línea y las que están debajo serán ignoradas--
+
+M    reportes/nomina/nprnomdefniv.php
+M    reportes/nomina/nprhistnomfirdefniv.php
+M    reportes/nomina/nprhistnomdefniv.php
+M    reportes/nomina/nprrelgenasided.php
+M    reportes/nomina/nprnomdefcat.php
+M    reportes/nomina/nomina_firma_categoria.php
+M    reportes/nomina/pdfnprhiscon.php
+M    reportes/nomina/nprconniv.php
+M    reportes/nomina/npfeccumple.yml
+M    reportes/nomina/pdfnprhistnomdefniv.php
+M    reportes/nomina/histnprconniv.php
+M    reportes/nomina/npraportesretenciones.php
+M    reportes/tesoreria/pdfoprordpre.php
+M    reportes/tesoreria/oprordpre.php
+M    reportes/tesoreria/pdfoprcompret_ltf_seniat.php
+M    reportes/tesoreria/pdfoprcompret_iva.php
+M    reportes/tesoreria/pdfoprcompret_islr_seniat.php
+M    reportes/compras/pdfcarordser.php
+M    reportes/compras/carordser.php
+M    reportes/compras/pdfcarordpre.php
+M    reportes/compras/carordpre.php
+M    lib/general/cabecera.php
+M    lib/general/Cabecera.php

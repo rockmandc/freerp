@@ -1,0 +1,12 @@
+modificaciones
+--Esta línea y las que están debajo serán ignoradas--
+
+M    reportes/nomina/pdfNPRHISTLISTCONC.php
+M    reportes/nomina/pdfnprlishcmtra.php
+M    reportes/nomina/pdfnprcontra.php
+M    reportes/presupuesto/pdfpredispreres.php
+M    reportes/reportes.yml
+M    reportes/compras/carordser.php
+M    lib/general/funciones.php
+M    lib/general/datepickercontrol.js
+M    lib/general/fechahora.js

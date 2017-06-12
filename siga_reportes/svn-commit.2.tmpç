@@ -1,0 +1,7 @@
+modificaciones de numa
+--Esta línea y las que están debajo serán ignoradas--
+
+M    reportes/nomina/pdfnprlishijtra.php
+M    reportes/reportes.yml
+M    reportes/compras/pdfcarinvlog.php
+M    reportes/compras/pdfcarstomax.php

@@ -1,0 +1,24 @@
+modificaciones al 27012011
+--Esta línea y las que están debajo serán ignoradas--
+
+M    reportes/nomina/pdfNPRASICAREMP2.php
+M    reportes/nomina/pdfNPRHISTLISTCONC.php
+M    reportes/nomina/pdfnprlishcmtra.php
+M    reportes/nomina/pdfnprcontra.php
+M    reportes/nomina/pdfarc.php
+M    reportes/nomina/pdfNPRASICAREMP.php
+M    reportes/tesoreria/pdfoprcompret_ltf_seniat.php
+M    reportes/tesoreria/pdfoprcompret_iva.php
+M    reportes/tesoreria/pdfoprcompret_islr_seniat.php
+M    reportes/tesoreria/pdfoprordpag_cc.php
+M    reportes/presupuesto/pdfpredispreres.php
+M    reportes/reportes.yml
+M    reportes/compras/carordser.php
+M    reportes/compras/pdfcarinvfis.php
+M    reportes/bienes/pdfbnrinvbiemue.php
+M    reportes/bienes/pdfbnrlisbm3.php
+M    reportes/bienes/pdfbnrlisbm2.php
+M    lib/modelo/sqls/bienes/Bnrlisactmuecat.class.php
+M    lib/general/funciones.php
+M    lib/general/datepickercontrol.js
+M    lib/general/fechahora.js

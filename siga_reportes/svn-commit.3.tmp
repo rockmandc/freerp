@@ -1,0 +1,9 @@
+modificaciones por informacion montada
+
+--Esta línea y las que están debajo serán ignoradas--
+
+M    reportes/nomina/pdfNPRLISTCONC.php
+M    reportes/nomina/pdfnprresconnom.php
+M    reportes/nomina/pdfnprhistnomdefniv.php
+M    reportes/tesoreria/pdftsrvoucher.php
+M    lib/general/cabecera.php

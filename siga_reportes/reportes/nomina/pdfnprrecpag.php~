@@ -1,0 +1,364 @@
+<?php
+
+require_once("../../lib/general/fpdf/fpdf.php");
+require_once("../../lib/general/cabecera.php");
+require_once("../../lib/modelo/sqls/nomina/Nprrecpag2.class.php");
+
+
+class pdfreporte extends fpdf
+{
+
+  function pdfreporte()
+  {
+    parent::FPDF("P");
+    $this->cabe='s';
+      $this->index=0;
+      $this->cab=new cabecera();
+      $this->codempdes= H::GetPost('codempdes');
+      $this->codemphas= H::GetPost('codemphas');
+      $this->codcardes= H::GetPost('codcardes');
+      $this->codcarhas= H::GetPost('codcarhas');
+      $this->codnomdes= H::GetPost('codnomdes');
+      //$this->codnomhas= H::GetPost('codnomhas');
+      $this->codcondes= H::GetPost('codcondes');
+      $this->codconhas= H::GetPost('codconhas');
+      $this->fecnomdes= H::GetPost('fecnomdes');
+      $this->fecnomhas= H::GetPost('fecnomhas');
+
+    $this->consecutivo=strtoupper(H::GetPost('consedes'));
+
+      $this->objNprrecpag = new Nprrecpag2();
+      $this->arrp = $this->objNprrecpag->SQLp($this->codnomdes,$this->codempdes,$this->codemphas,$this->codcardes,$this->codcarhas,$this->codcondes,$this->codconhas);
+      //H::printR($this->arrp);exit;
+    //$this->SetAutoPageBreak(true,15);
+  }
+
+  function footer(){
+
+  }
+
+  function br()
+  {
+    $arrnumrec = $this->objNprrecpag->sqlnumrel();
+    $this->numrec=$arrnumrec[$this->index]["ultrec"];
+    if (is_null($this->numrec) || ($this->numrec < 0) || (trim($this->numrec)==''))
+      $this->numrec=0;
+
+    if (strtoupper($this->consecutivo)=='S')
+    {
+      $arrcont = $this->objNprrecpag->sqlcontador($this->codnomdes,$this->codempdes,$this->codemphas,
+      											  $this->codcardes,$this->codcarhas,$this->codcondes,$this->codconhas);
+      $numrecnew = $this->numrec + $arrcont[0]["numemp"];
+      $this->objNprrecpag->sqlnpdefgen($numrecnew);
+
+    }else
+    {
+      $this->numrec=0;
+    }
+
+    }
+
+    function logos(){
+  	  	/*$this->Image("../../img/logo_2.jpg",15,$this->gety(),15);
+  	  	$centro_logo_width = 50;
+  	  	$this->Image("../../img/centro_logo.jpg",$this->w/2-$centro_logo_width/2,$this->gety(),$centro_logo_width);*/
+		$this->Image("../../img/logo_1.jpg",10,10,35);
+		//$this->Image("../../img/logo1_CDEES.jpg",10,10,35);
+		//$this->Image("../../img/logo2_CDEES.jpg",140,15,50);
+		$this->ln(15);
+		$c = $this->getConfig();
+		$this->setFont($c['titulo']['fuente'],"B",8);
+	  	$this->cell(0,5,H::GetPost("titulo"),0,0,"C");
+	  	//$this->ln(8);
+    }
+
+        function logos2(){
+  	  	/*$this->Image("../../img/logo_2.jpg",15,$this->gety(),15);
+  	  	$centro_logo_width = 50;
+  	  	$this->Image("../../img/centro_logo.jpg",$this->w/2-$centro_logo_width/2,$this->gety(),$centro_logo_width);
+		$this->Image("../../img/logo_1.jpg",180,$this->gety(),15);*/
+		$this->Image("../../img/logo1_CDEES.jpg",10,145,35);
+		$this->Image("../../img/logo2_CDEES.jpg",140,150,50);
+		$this->ln(15);
+		$c = $this->getConfig();
+		$this->setFont($c['titulo']['fuente'],"B",8);
+	  	$this->cell(0,5,H::GetPost("titulo"),0,0,"C");
+	  	//$this->ln(8);
+    }
+
+    function Header()
+    {
+
+       //$this->getCabecera(H::GetPost("titulo"),"",false);
+		$this->logos();
+       $this->setwidths(array(90,25,39));
+       $this->setAligns(array("L","R","R"));
+    }
+
+    function Cuerpo()
+    {
+      $this->br();
+      $i=0;
+      $obj=$this->arrp[$i];
+      $acumasigna=0;
+      $acumdeduc=0;
+      $ref=$obj["codemp"];
+      $this->numrec++;
+      if ($this->consecutivo=='S')
+      {
+        $arrcorrel = $this->objNprrecpag->sqlbuscacorrel($obj["codemp"],$obj["codcar"],$obj["codnom"]);
+        $nro=$arrcorrel[$this->index]["numero"];
+
+        if (is_null($nro) || ($nro<=0))
+        {
+          $nro=$this->numrec;
+        }
+        else
+        {
+          $this->objNprrecpag->sqlnpnomcal($this->numrec,$obj["codemp"],$obj["codcar"],$obj["codnom"]);
+          $this->numrec--;
+        }
+      }else
+      {
+        $nro=$this->numrec;
+      }
+      $this->setFont("Arial","B",8);
+      $this->cell(150,5,"");
+      $this->cell(10,5,"NRO.   ".$nro);
+      $this->ln();
+      $this->ln();
+      $this->cell(5,5,"");
+      $this->cell(115,5,"Nomina:   ".strtoupper($obj["nomnom"]));
+      $this->cell(50,5,"                            Fecha:",0,0,"R");
+      $this->setFont("Arial","",8);
+      $this->cell(20,5,date("d/m/Y",strtotime($obj["fecnom"])));
+      /*$this->setFont("Arial","B",8);
+      $this->cell(10,5,"Hasta");
+      $this->setFont("Arial","",8);
+      $this->cell(20,5,$this->fecnomhas);*/
+      $this->setFont("Arial","B",8);
+      $this->ln(6);
+      $this->cell(5,5,"");
+      $this->cell(32,5,"Cedula Identidad");
+      $this->cell(53,5,"Nombre del Trabajador");
+      $this->cell(62,5,"Fecha de ingreso: ".$obj["fecing"]);
+      $this->cell(32,5,"Sueldo Básico");
+      $this->ln();
+      $this->setFont("Arial","",8);
+      $this->SetFillColor(170,170,170);
+      $this->Rect(16,$this->GetY(),22,4,"F");
+      $this->Rect(48,$this->GetY(),75,4,"F");
+      $this->cell(9,5,"");
+      $this->cell(28,5,$obj["codemp"]);
+      $this->cell(104,5,strtoupper($obj["nomemp"]));
+
+      $arrsueldo = $this->objNprrecpag->sqlcalulasueldo($obj["codcar"]);
+      $this->cell(30,5,H::FormatoMonto($arrsueldo[$this->index]["valor"]),0,0,"R");
+
+      $this->setFont("Arial","B",8);
+      $this->ln();
+      $this->cell(5,5,"");
+      $this->cell(85,5,"Cargo");
+      $this->cell(30,5,"Nivel Organizacional");
+      $this->ln(4);
+      $this->setFont("Arial","",8);
+      $this->cell(5,5,"");
+      $w = 85;
+      $l = $this->nblines($w,strtoupper($obj["nomcar"]));
+      $y=$this->gety();
+      $x = $this->getx();
+      $this->multicell($w,5,strtoupper($obj["nomcar"]),0,"L");
+      $this->setxy($x+85,$y);
+      $this->cell(80,5,$obj["codniv"]."   ".$obj["desniv"]);
+      $this->ln($l*5);
+      $this->setFont("Arial","B",8);
+      $this->cell(5,5,"");
+      $this->cell(85,5,"Centro de Pago");
+      $this->ln(4);
+      $this->setFont("Arial","",8);
+      $this->cell(5,5,"");
+      $this->cell(85,5,strtoupper($obj["nomban"]));
+      $this->setFont("Arial","B",8);
+      $this->ln(7);
+      $this->cell(5,5,"");
+      $this->cell(98,5,"Nombre del Concepto");
+      $this->cell(40,5,"Asignación");
+      $this->cell(45,5,"Deducción");
+      //$this->cell(30,5,"Saldo");
+      $this->Line(10,$this->GetY()+5,200,$this->GetY()+5);
+      $y=$this->GetY();
+      $this->ln();
+
+      foreach($this->arrp as $obj)
+      {
+        if ($obj["codemp"]!=$ref)
+        {
+          //$this->ln(6);
+          $this->Line(92,$this->GetY(),195,$this->GetY());
+          $this->cell(80,5,"");
+	      $this->setFont("Arial","B",8);
+	      $this->cell(10,5,"TOTALES");
+	      $this->cell(31,5,H::FormatoMonto($acumasigna),0,0,"R");
+	      $this->cell(39,5,H::Formatomonto($acumdeduc),0,0,"R");
+	      $this->ln(7);
+	      $this->cell(5,5,"");
+	      $this->cell(75,5,"Recibe Conforme:");
+	      $this->cell(98,5,"NETO A COBRAR");
+	      $this->Rect(180,$this->GetY(),20,4,"F");
+	      $this->cell(10,5,H::FormatoMonto($acumasigna-$acumdeduc),0,0,"R");
+          $this->ln(10);
+          $acumasigna=0;
+          $acumdeduc=0;
+          /*if ($this->GetY()>180)
+          {
+            $this->ln(100);
+          }
+          else
+          {
+            $this->ln(10);
+          }*/
+
+          $this->numrec++;
+          if ($this->consecutivo=='S')
+          {
+            $arrcorrel = $this->objNprrecpag->sqlbuscacorrel($obj["codemp"],$obj["codcar"],$obj["codnom"]);
+            $nro=$arrcorrel[0]["numero"];
+
+            if (is_null($nro) || ($nro<=0))
+            {
+              $nro=$this->numrec;
+            }
+            else
+            {
+              $this->objNprrecpag->sqlnpnomcal($this->numrec,$obj["codemp"],$obj["codcar"],$obj["codnom"]);
+              $this->numrec--;
+            }
+          }else
+          {
+            $nro=$this->numrec;
+          }
+
+      	  if (($nro-1)%2==0) $this->addpage();
+      	  else {
+      	  	//$this->ln(5);
+      	  	//$this->setDash(2,2);
+			$this->line (0,$this->h/2,$this->w,$this->h/2);
+			//$this->setDash();
+			$this->setY($this->h/2+$this->tMargin);
+			$this->logos2();
+      	  }
+          $this->setFont("Arial","B",8);
+          //if ($this->GetY()>=1)
+            //$this->addPage();
+          $this->setFont("Arial","B",8);
+          $this->cell(150,5,"");
+          $this->cell(10,5,"NRO.   ".$nro);
+          $this->ln();
+          $this->cell(5,5,"");
+          $this->cell(115,5,"Nomina:   ".strtoupper($obj["nomnom"]));
+          $this->cell(50,5,"Fecha:",0,0,"R");
+          $this->setFont("Arial","",8);
+          $this->cell(20,5,date("d/m/Y",strtotime($obj["fecnom"])));
+          $this->setFont("Arial","B",8);
+          /*$this->cell(10,5,"Hasta");
+          $this->setFont("Arial","",8);
+          $this->cell(20,5,$this->fecnomhas);*/
+          $this->setFont("Arial","B",8);
+          $this->ln(6);
+          $this->cell(5,5,"");
+          $this->cell(32,5,"Cedula Identidad");
+          $this->cell(53,5,"Nombre del Trabajador");
+      	  $this->cell(62,5,"Fecha de ingreso: ".$obj["fecing"]);
+          $this->cell(32,5,"Sueldo");
+          $this->ln();
+          $this->setFont("Arial","",8);
+          $this->SetFillColor(170,170,170);
+          $this->Rect(16,$this->GetY(),22,4,"F");
+          $this->Rect(48,$this->GetY(),75,4,"F");
+          $this->cell(9,5,"");
+          $this->cell(28,5,$obj["codemp"]);
+          $this->cell(104,5,strtoupper($obj["nomemp"]));
+
+          $arrsueldo = $this->objNprrecpag->sqlcalulasueldo($obj["codcar"]);
+          $this->cell(30,5,H::FormatoMonto($arrsueldo[$this->index]["valor"]),0,0,"R");
+
+          $this->setFont("Arial","B",8);
+          $this->ln();
+          $this->cell(5,5,"");
+          $this->cell(85,5,"Cargo");
+          $this->cell(30,5,"Nivel Organizacional");
+          $this->ln(4);
+          $this->setFont("Arial","",8);
+          $this->cell(5,5,"");
+          $w = 85;
+          $l = $this->nblines($w,strtoupper($obj["nomcar"]));
+          $y=$this->gety();
+          $x = $this->getx();
+          $this->multicell($w,5,strtoupper($obj["nomcar"]),0,"L");
+          $this->setxy($x+85,$y);
+          $this->cell(80,5,$obj["codniv"]."   ".$obj["desniv"]);
+          $this->ln($l*5);
+          $this->setFont("Arial","B",8);
+          $this->cell(5,5,"");
+          $this->cell(85,5,"Centro de Pago");
+          $this->ln(4);
+          $this->setFont("Arial","",8);
+          $this->cell(5,5,"");
+          $this->cell(85,5,strtoupper($obj["nomban"]));
+          $this->setFont("Arial","B",8);
+          $this->ln(7);
+          $this->cell(16,5,"");
+          $this->cell(104,5,"Nombre del Concepto");
+          $this->cell(35,5,"Asignaciones");
+          $this->cell(40,5,"Deducciones");
+          //$this->cell(30,5,"Saldo");
+          $this->Line(10,$this->GetY()+5,200,$this->GetY()+5);
+          //aki
+          $this->ln();
+          $filas  = 0;
+        }
+        //Detalle
+        $ref=$obj["codemp"];
+        $this->setFont("Arial","",8);
+        //$this->cell(16,5,"");
+        //$this->cell(74,5,strtoupper($obj["nomcon"]));
+        //$this->cell(21,5,H::FormatoMonto($obj["asigna"]),0,0,"R");
+        $acumasigna=$acumasigna+$obj["asigna"];
+        //$this->cell(34,5,H::FormatoMonto($obj["deduc"]),0,0,"R");
+        $acumdeduc=$acumdeduc+$obj["deduc"];
+
+        $arrprestamos = $this->objNprrecpag->sqlprestamos($obj["codcon"]);
+        $arrnpasiconemp =  $this->objNprrecpag->sqlnpasiconemp($obj["codemp"],$obj["codcar"],$obj["codcon"]);
+
+        if (!$arrprestamos)
+        {
+          $saldo=0;
+        }
+        else
+        {
+          $saldo=$arrnpasiconemp[0]["saldo"];
+        }
+        //$this->cell(30,5,H::FormatoMonto($saldo),0,0,"R");
+        $this->setx(16);
+        if(!(($obj["asigna"]==0 && $obj["deduc"]==0 && $saldo==0)))
+        	$this->rowm(array(strtoupper($obj["nomcon"]),H::FormatoMonto($obj["asigna"]),H::FormatoMonto($obj["deduc"])));//,H::FormatoMonto($saldo)
+
+      }
+      //$this->ln(6);
+      $this->Line(92,$this->GetY(),200,$this->GetY());
+      $this->cell(80,5,"");
+      $this->setFont("Arial","B",8);
+      $this->cell(10,5,"TOTALES");
+      $this->cell(31,5,H::FormatoMonto($acumasigna),0,0,"R");
+      $this->cell(39,5,H::Formatomonto($acumdeduc),0,0,"R");
+      $this->ln(7);
+      $this->cell(5,5,"");
+      $this->cell(75,5,"Recibe Conforme:");
+      $this->cell(98,5,"NETO A COBRAR");
+      $this->Rect(180,$this->GetY(),20,4,"F");
+      $this->cell(10,5,H::FormatoMonto($acumasigna-$acumdeduc),0,0,"R");
+
+    }
+
+  }
+?>
